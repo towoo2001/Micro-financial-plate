@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html style="background: #fff;">
+<head>
+    <meta charset=utf-8 />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="email=no">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="x5-orientation" content="portrait">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+    <meta name="browsermode" content="application">
+    <meta name="x5-page-mode" content="app">
+
+    <title>首页</title>
+</head>
+<body style="background: #fff;">
+<div>
+        <input type="button" value="登陆" onclick="login();"/>
+        <input type="button" value="查询1" onclick="getList();"/>
+
+        <input type="button" value="查询2" onclick="getGoodsList();"/>
+
+        <input type="button" value="退出" onclick="logout();"/>
+</div>
+
+
+</body>
+
+</html>
+<script type="text/javascript" src="./js/lib/jquery-weui/dist/lib/jquery-2.1.4.js"></script>
+<script type="text/javascript">
+    function login() {
+        $.ajax({
+            type: 'POST',
+            url: "/api/customers/account/login",
+            data: JSON.stringify({"params": {"mobile": "13632473925", "password": "shaniu"}}),
+            contentType: "application/json;charset=UTF-8",
+            dataType: 'json',
+            success: function (result) {
+                alert(JSON.stringify(result))
+            },
+            error: function (info) {
+
+            },
+            complete: function (xhr, status) {
+
+            }
+
+        });
+    }
+
+    function getList() {
+        $.ajax({
+            type: 'POST',
+            url: "/api/customers/bankcard/getlist",
+            data: JSON.stringify({"params": {}}),
+            contentType: "application/json;charset=UTF-8",
+            dataType: 'json',
+            success: function (result) {
+                alert(JSON.stringify(result))
+            },
+            error: function (info) {
+
+            },
+            complete: function (xhr, status) {
+
+            }
+
+        });
+    }
+    function getGoodsList() {
+        $.ajax({
+            type: 'POST',
+            url: "/api/infos/goods/getGoodsTypelist",
+            data: JSON.stringify({"params": {}}),
+            contentType: "application/json;charset=UTF-8",
+            dataType: 'json',
+            success: function (result) {
+                alert(JSON.stringify(result))
+            },
+            error: function (info) {
+
+            },
+            complete: function (xhr, status) {
+
+            }
+
+        });
+    }
+
+    function logout() {
+        $.ajax({
+            type: 'POST',
+            url: "/api//customers/account/logout",
+            data: JSON.stringify({"params": {}}),
+            contentType: "application/json;charset=UTF-8",
+            dataType: 'json',
+            success: function (result) {
+                alert(JSON.stringify(result))
+            },
+            error: function (info) {
+
+            },
+            complete: function (xhr, status) {
+
+            }
+
+        });
+    }
+
+</script>

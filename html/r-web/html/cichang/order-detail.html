@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html style="background: none;">
+<head>
+    <meta charset=utf-8 />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="email=no">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <!--<meta http-equiv="Cache-Control" content="no-cache">-->
+    <meta name="screen-orientation" content="portrait">
+    <meta name="x5-orientation" content="portrait">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+    <meta name="browsermode" content="application">
+    <meta name="x5-page-mode" content="app">
+    <link rel="stylesheet" href="../../js/lib/jquery-weui/dist/lib/weui.css">
+    <link rel="stylesheet" href="../../js/lib/jquery-weui/dist/css/jquery-weui.css">
+    <link rel="stylesheet" href="../../css/swiper-3.3.1.min.css">
+    <link rel="stylesheet" href="../../css/reset.css">
+    <link rel="stylesheet" href="../../css/global.css">
+    <!--<script src="http://g.tbcdn.cn/mtb/lib-flexible/0.3.4/??flexible_css.js,flexible.js"></script>-->
+    <script src="../../js/rem/flexible.css.js"></script>
+    <script src="../../js/rem/flexible.ios.js"></script>
+    <title>订单详情</title>
+</head>
+<body style="background: #fff;">
+
+<div id="vuebox" class="orderDetailWrap">
+
+    <div class="orderBase w100 ovhd">
+        <li class="orderInfoItem ovhd">
+            <p class="orderInfoKey">品种</p>
+            <p class="orderInfoVal" v-cloak>
+                <span v-cloak>{{pos.position.name}}</span>
+            </p>
+        </li>
+        <li class="orderInfoItem ovhd">
+            <p class="orderInfoKey">数量</p>
+            <p class="orderInfoVal" v-cloak>
+                <span v-cloak>{{pos.position.amount}}</span>手
+            </p>
+        </li>
+        <li class="orderInfoItem ovhd">
+            <p class="orderInfoKey">手续费</p>
+            <p class="orderInfoVal" v-cloak>
+                <span v-cloak>{{pos.position.openCharge}}</span>元
+            </p>
+        </li>
+        <li class="orderInfoItem ovhd">
+            <p class="orderInfoKey">买入价</p>
+            <p class="orderInfoVal" v-cloak>
+                <span v-cloak="">{{pos.position.openPrice}}</span>元
+            </p>
+        </li>
+        <li class="orderInfoItem ovhd">
+            <p class="orderInfoKey">买入时间</p>
+            <p class="orderInfoVal" v-cloak>
+                <span v-cloak="">{{pos.position.openTime}}</span>
+            </p>
+        </li>
+    </div>
+
+    <div class="orderOperat w100 ovhd">
+        <h4 class="operateTitle tc">
+            请务必设置止盈止亏，以便降低风险
+        </h4>
+        <div class="profitOpr ovhd">
+            <div class="prof">
+                盈利
+            </div>
+            <div class="operatWrap ovhd">
+                <a href="javascript:void(0)" class="aAdd" @click="reduProfit()">
+                    <img src="../../images/orderaredu.png" alt="">
+                </a>
+                <div class="operatText" v-cloak>
+                    {{pos.position.limitProfit == null?10:pos.position.limitProfit}}%
+                </div>
+                <a href="javascript:void(0)" class="aRed" @click="addProfit()">
+                    <img src="../../images/orderadd.png" alt="">
+                </a>
+            </div>
+            <div class="prol">
+                抛出
+            </div>
+        </div>
+        <div class="profitOpr ovhd">
+            <div class="prof">
+                亏损
+            </div>
+            <div class="operatWrap ovhd">
+                <a href="javascript:void(0)" class="aAdd"  @click="reduLoss()">
+                    <img src="../../images/orderaredu.png" alt="">
+                </a>
+                <div class="operatText" v-cloak>
+                    {{pos.position.stop == null?10:pos.position.stop}}%
+                </div>
+                <a href="javascript:void(0)" class="aRed" @click="addLoss()">
+                    <img src="../../images/orderadd.png" alt="">
+                </a>
+            </div>
+            <div class="prol">
+                抛出
+            </div>
+        </div>
+        <p class="operatTip">
+            (设置区间为10%-50%)
+        </p>
+    </div>
+
+    <div class="majorTip">
+        <p>重要提示：</p>
+        <p>1.这里是个提示提示。。。</p>
+        <p>2.这里是另一个提示提示。。。</p>
+    </div>
+
+    <!--<footer id="footer">-->
+        <!--<li class="navItem active">-->
+            <!--<img src="../../images/jiaoyifocus.png" alt="">-->
+            <!--<p>首页</p>-->
+        <!--</li>-->
+        <!--<li class="navItem">-->
+            <!--<img src="../../images/videoblur.png" alt="">-->
+            <!--<p>直播</p>-->
+        <!--</li>-->
+        <!--<li class="navItem">-->
+            <!--<img src="../../images/newsblur.png" alt="">-->
+            <!--<p>新闻</p>-->
+        <!--</li>-->
+        <!--<li class="navItem">-->
+            <!--<img src="../../images/myblur.png" alt="">-->
+            <!--<p>个人</p>-->
+        <!--</li>-->
+    <!--</footer>-->
+</div>
+
+<script type="text/javascript" src="../../js/lib/jquery-weui/dist/lib/jquery-2.1.4.js"></script>
+<script type="text/javascript" src="../../js/lib/jquery-weui/dist/js/jquery-weui.js"></script>
+<script type="text/javascript" src="../../js/lib/vue/dist/vue.js"></script>
+<script type="text/javascript" src="../../js/lib/jquery.md5.js"></script>
+<script type="text/javascript" src="../../js/config.js"></script>
+<script type="text/javascript" src="./order-detail.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html style="background: #e8edf2">
+<head>
+    <meta charset=utf-8 />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="email=no">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <!--<meta http-equiv="Cache-Control" content="no-cache">-->
+    <meta name="screen-orientation" content="portrait">
+    <meta name="x5-orientation" content="portrait">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+    <meta name="browsermode" content="application">
+    <meta name="x5-page-mode" content="app">
+    <link rel="stylesheet" href="../../js/lib/jquery-weui/dist/lib/weui.css">
+    <link rel="stylesheet" href="../../js/lib/jquery-weui/dist/css/jquery-weui.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_nzfsot6rhxj0dx6r.css">
+    <link rel="stylesheet" href="../../css/reset.css">
+    <link rel="stylesheet" href="../../css/global.css">
+    <script src="../../js/rem/flexible.css.js"></script>
+    <script src="../../js/rem/flexible.ios.js"></script>
+    <title>交易历史</title>
+</head>
+<body style="background: #e8edf2">
+<div id="vuebox" class="BPHistory">
+    <div class="BPHistoryWrap">
+        <div class="serachHeader w100 ovhd">
+            <i class="searchHeaderTitle disbl fl">
+                查询<br/>
+                时间
+            </i>
+            <div class="searchInput disbl fl">
+                <input type="date" class="startTime" v-model="prolist.startTime" placeholder="开始时间"> - <input type="date" class="endTime" placeholder="结束时间" v-model="prolist.endTime">
+            </div>
+            <i class="searchIcon disbl fr">
+                <img src="../../images/searchIcon.png" alt="" @click="selectInfo()">
+            </i>
+        </div>
+        <div class="menuList w100 ovhd">
+            <li class="ListItem fl">
+                <p v-cloak class="textOverDot">{{totalInfo.counts}}</p>
+                <span>总单数</span>
+            </li>
+            <li class="ListItem fl">
+                <p v-cloak class="textOverDot">{{totalInfo.amount}}</p>
+                <span>总手数</span>
+            </li>
+            <li class="ListItem fl">
+                <p v-cloak class="textOverDot">{{totalInfo.grossProfit}}</p>
+                <span>总盈亏</span>
+            </li>
+        </div>
+    </div>
+    <div class="messageWrap">
+        <div class="BPHistoryWrapList">
+            <div class="noData iconfont icon-wuneirong" v-if="(prolist.pro).length<1">
+
+            </div>
+            <li class="BPHistoryItem" v-if="(prolist.pro).length>0" v-for="(por,index) in prolist.pro">
+                <time class="disbl ovhd fl textOverDot" v-cloak>
+                    {{por.closeTime}}
+                </time>
+                <div class="ItemDetail fl ovhd">
+                    <p v-cloak>{{por.name}}</p>
+                    <p>
+                        <span class="handNum" v-cloak>
+                            {{por.amount}}手
+                        </span>
+                        <span class="buyType" :class="{up:por.buySell == 1,down:por.buySell != 1}" v-cloak>
+                            {{por.buySell == 1 ?"买涨":"买跌"}}
+                        </span>
+                    </p>
+                </div>
+                <b class="YKNum disbl fr" :class="{loss:por.grossProfit<0,up:por.grossProfit>-1}" v-cloak>
+                    {{por.grossProfit}}
+                </b>
+            </li>
+            <div class="weui-infinite-scroll" v-if="msglength.len>9">
+                <div class="infinite-preloader"></div>
+                正在加载
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../../js/lib/jquery-weui/dist/lib/jquery-2.1.4.js"></script>
+<script type="text/javascript" src="../../js/lib/jquery-weui/dist/js/jquery-weui.js"></script>
+<script type="text/javascript" src="../../js/lib/vue/dist/vue.js"></script>
+<script type="text/javascript" src="../../js/lib/jquery.md5.js"></script>
+<script type="text/javascript" src="../../js/config.js"></script>
+
+<script type="text/javascript" src="./b-p-history.js"></script>
+</body>
+
+</html>

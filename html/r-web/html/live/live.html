@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8 />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="email=no">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="x5-orientation" content="portrait">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+    <meta name="browsermode" content="application">
+    <meta name="x5-page-mode" content="app">
+    <title>直播</title>
+    <script src="../../js/rem/flexible.css.js"></script>
+    <script src="../../js/rem/flexible.ios.js"></script>
+    <script type="text/javascript" src="http://static.gensee.com/webcast/static/sdk/js/gssdk.js"></script>
+    <!--iconfont图标库css-->
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_j5e3qktxxeu680k9.css">
+    <!--icon表情包js-svg-->
+    <script src="//at.alicdn.com/t/font_2pcgj0okx4po80k9.js"></script>
+    <link rel="stylesheet" href="../../js/lib/jquery-weui/dist/lib/weui.css">
+    <link rel="stylesheet" href="../../js/lib/jquery-weui/dist/css/jquery-weui.css">
+    <link rel="stylesheet" href="../../css/reset.css">
+    <link rel="stylesheet" href="../../css/live.css">
+    <link rel="stylesheet" href="../../css/global.css">
+    <style>
+        .videoWrap,.videoWrap iframe{
+            width: 100%;
+            overflow: hidden;
+            height: 240px;
+        }
+    </style>
+</head>
+<body>
+<!--用户未登录提示-->
+<div id="loadtiplayer"></div>
+<div class="PCconfirmLayer PCsharefirmLayer userNotLoad" v-cloak>
+    <div class="layerHeader w100">
+        您还未登录
+    </div>
+    <div class="layerCon w100">
+        <div class="layerConWrap" style="line-height: 2.675rem;">
+            <p class="YK tc">
+                现在去登录?
+            </p>
+        </div>
+    </div>
+    <div class="layerFooter w100 ovhd">
+        <a href="javascript:void(0)" class="cancelPC disbl nowCancel">取消</a>
+        <a href="javascript:void(0)" class="confirmPC disbl nowToLoad">确定</a>
+    </div>
+</div>
+
+<div class="videoWrap">
+    <!--<gs:video-live id="videoComponent" site="bywl888.gensee.com"  ownerid="6e53b624275145b891cd84f0e2aa59cd"/>-->
+    <!--<video src="Skydive.mp4" autoplay style="width: 100%;height: 100%" controls aria-controls></video>-->
+</div>
+<div id="screenlayer"></div>
+<div id="screenlayer2"></div>
+<div class="listInfo" id="vueBox">
+
+    <!--平仓分享弹出框-->
+    <transition name="fade">
+        <div class="PCconfirmLayer PCsharefirmLayer" v-show="shareState.state" v-cloak>
+            <div class="layerHeader w100">
+                平仓成功
+            </div>
+            <div class="layerCon w100">
+                <div class="layerConWrap">
+                    <p class="SXF">
+                        <span>盈利:</span>
+                        <span class="SXFval" :class="{up:confirm.profit>-1,down:confirm.profit<0}" v-cloak>
+                            {{confirm.profit}}
+                        </span>
+                    </p>
+                    <p class="YK opac_0">
+                         <span>
+                             ###
+                         </span>
+                         <span class="YKval up" v-cloak>
+                             ###
+                         </span>
+                    </p>
+                    <p class="YE">
+                        <span>
+                            平仓后余额:
+                        </span>
+                         <span class="YEval" v-cloak>
+                             {{confirm.balance}}
+                         </span>
+                    </p>
+                </div>
+            </div>
+            <div class="layerFooter w100 ovhd">
+                <a href="javascript:void(0)" @click="closeShare()" class="cancelPC disbl">确定</a>
+                <a href="javascript:void(0)" @click="toShare()" class="confirmPC disbl">晒单</a>
+            </div>
+        </div>
+    </transition>
+
+    <!--平仓-->
+    <transition name="fade">
+        <div class="PCconfirmLayer" v-cloak v-show="confirmState.state">
+            <div class="layerHeader porel w100">
+                <div class="poabl w100 h100 tl PCtipsCon">
+                    尊敬的用户，如果您选择不允许交易偏差，您的订单只会在行情再次达到显示点位时才会平仓。
+                </div>
+                确定平仓吗？
+            </div>
+            <div class="layerCon w100">
+                <div class="layerConWrap">
+                    <p class="SXF">
+                        <span>平仓手续费:</span>
+                <span class="SXFval" v-cloak>
+                    {{confirm.closeChargeFee}}
+                </span>
+                    </p>
+                    <p class="YK">
+                 <span>
+                     浮动盈亏:
+                 </span>
+                 <span class="YKval" :class="{up:confirm.profit>-1,down:confirm.profit<0}" v-cloak>
+                     {{confirm.profit}}
+                 </span>
+                    </p>
+                    <p class="YE">
+                <span>
+                    平仓后余额:
+                </span>
+                 <span class="YEval" v-cloak>
+                     {{confirm.balance}}
+                 </span>
+                    </p>
+                    <p class="agreenFloat disbl ovhd">
+                        <label class="disbl ovhd fl">
+                            <input type="checkbox" @click="isAgreenFiveFloat.state=!isAgreenFiveFloat.state" :checked="isAgreenFiveFloat.state" id="rempwd">
+                        <span class="PCtipsT">允许最大交易偏差5个点
+                        </span>
+                        </label>
+                    <span class="fr PCtips">
+                        ?
+                    </span>
+                    </p>
+                </div>
+            </div>
+            <div class="layerFooter w100 ovhd"><a href="javascript:void(0)" @click="cancelPC()" class="cancelPC disbl feedBtn">取消</a>
+                <a href="javascript:void(0)" @click="confirmPC()" class="confirmPC disbl feedBtn">确定</a>
+            </div>
+        </div>
+    </transition>
+
+    <!--全部平仓-->
+    <transition name="fade">
+        <div class="PCconfirmLayer" v-cloak v-show="allconfirmState.state">
+            <div class="layerHeader porel w100">
+                <div class="poabl w100 h100 tl PCtipsCon">
+                    尊敬的用户，如果您选择不允许交易偏差，您的订单只会在行情再次达到显示点位时才会平仓。
+                </div>
+                确定平仓吗？
+            </div>
+            <div class="layerCon w100">
+                <div class="layerConWrap">
+                    <p class="SXF">
+                        <span>平仓手续费:</span>
+                <span class="SXFval" v-cloak>
+                    {{confirm.closeChargeFee}}
+                </span>
+                    </p>
+                    <p class="YK">
+                 <span>
+                     浮动盈亏:
+                 </span>
+                 <span class="YKval" :class="{up:confirm.profit>-1,down:confirm.profit<0}" v-cloak>
+                     {{confirm.profit}}
+                 </span>
+                    </p>
+                    <p class="YE">
+                <span>
+                    平仓后余额:
+                </span>
+                 <span class="YEval" v-cloak>
+                     {{confirm.balance}}
+                 </span>
+                    </p>
+                    <p class="agreenFloat disbl ovhd">
+                        <label class="disbl ovhd fl">
+                            <input type="checkbox" @click="isAgreenFiveFloat.state=!isAgreenFiveFloat.state" :checked="isAgreenFiveFloat.state" id="rempwd">
+                        <span class="PCtipsT">允许最大交易偏差5个点
+                        </span>
+                        </label>
+                    <span class="fr PCtips">
+                        ?
+                    </span>
+                    </p>
+                </div>
+            </div>
+            <div class="layerFooter w100 ovhd">
+                <a href="javascript:void(0)" @click="cancelPC()" class="cancelPC disbl feedBtn">取消</a>
+                <a href="javascript:void(0)" @click="allConfirmPC()" class="confirmPC disbl feedBtn">确定</a>
+            </div>
+        </div>
+    </transition>
+
+
+    <div class="JPC">
+        <a href="javascript:void(0)" class="feedBtn" @click="showJC()">建仓</a>
+        <a href="javascript:void(0)" class="feedBtn" @click="showPC()">平仓</a>
+    </div>
+    <div class="tabSel">
+        <p v-bind:class="{ active: isShowLive }" @click="showLive()" href="javascript:void(0)">
+            <span>文字直播</span>
+        </p>
+        <p v-bind:class="{ active: isShowChat }" href="javascript:void(0)" @click="showChat()">
+            <span v-cloak>聊天室(<span id="total">0</span>)</span>
+        </p>
+    </div>
+    <div class="infoConWrap">
+        <!--直播内容-->
+        <div class="infoConLeft" v-if="isShowLive">
+            <div class="noCon iconfont icon-wuneirong" v-show="!LiveCon.length">
+                <!--直播内容为空显示空盒-->
+            </div>
+            <li v-for="con in LiveCon">
+                <time class="liveTime" v-cloak>
+                    {{con.time}}
+                </time>
+                <article class="liveCon">
+                    <p v-cloak>
+                        <span>姓名：</span>{{con.name}}
+                    </p>
+                    <p v-cloak>
+                        <span>性别：</span>{{con.sex}}
+                    </p>
+                    <p v-cloak>
+                        <span>简介：</span>{{con.descr}}
+                    </p>
+                </article>
+            </li>
+        </div>
+        <!--聊天内容-->
+        <div class="infoConRight" v-if="isShowChat">
+
+            <div class="noCon iconfont icon-wuneirong" v-show="!chatCon.length">
+                <!--聊天数据为空显示空盒-->
+            </div>
+            <section class="cahtConWrap">
+                <li v-for="con in chatCon">
+                    <!-- 普通文本信息-->
+                    <div v-if="con.type=='text'">
+                        <div class="personInfo" >
+                            <img v-bind:src="con.img"/>
+                            <span class="personName" v-cloak>
+                                <span class="normalChatInfo">{{con.name}}</span>
+                            </span>
+                        </div>
+                        <div class="chatListCon" >
+                            <i class="LTKicon">
+                            </i>
+                            <span v-html="con.con">
+                                <!-- {{{con.con}}} -->
+                            </span>
+                        </div>
+                    </div>
+                    <!-- 主播文本信息-->
+                    <div v-if="con.type=='anchor'">
+                        <div class="personInfo" >
+                            <img v-bind:src="con.img"/>
+                            <span class="personName" v-cloak>
+                                <span class="ZhuBoTags">主播</span>{{con.name}}
+                            </span>
+                        </div>
+                        <div class="chatListCon" >
+                            <i class="LTKicon">
+                            </i>
+                            <span v-html="con.con">
+                                <!-- {{{con.con}}} -->
+                            </span>
+                        </div>
+                    </div>
+                    <!-- 离开聊天室-->
+                    <span class="ouChatRoomTip" v-if="con.type=='close'">{{con.name}}离开聊天室</span>
+
+                    <!-- 进入聊天室-->
+                    <span class="enChatRoomTip" v-if="con.type=='wel'">
+                        欢迎 <span class="YKName">{{con.name}}</span> 进入聊天室
+                    </span>
+
+                    <!-- 进入聊天室-->
+                    <span class="coChatRoomFalse" v-if="con.type=='error'">连接聊天室服务失败</span>
+                </li>
+            </section>
+            <div class="botHasNewmsg">
+                底部有新消息
+            </div>
+        </div>
+    </div>
+    <div class="onlySeeMeTip">
+        聊天内容不自动向下滚动
+    </div>
+    <div id="chatform" v-show="isShowChat">
+        <div class="formInnerWrap">
+            <input type="text" name="chatCon" v-model="formCon" id="chattextarea" class="chatCon" @focus="closePicIcon()" @keyup.enter="sendChat()" placeholder="请输入聊天内容"/>
+            <i class="addImgIcon iconfont" @click="openPicIcon()">
+                &#xe600;
+            </i>
+            <a v-show="formCon" href="javascript:void(0)" id="sendForm" v-bind:class="{ disable:!formCon }" @click="sendChat()">
+                发送
+            </a>
+            <i class="iconfont icon-baowenguolvyingyong onlySeeMe" v-show="!formCon" @click="isSeeMe()" v-bind:class="{ on:onlySeeMe.state }">
+
+            </i>
+        </div>
+    </div>
+    <div class="imgIconWrap" v-show="isShowPicIcon">
+        <div class="closeIcon">
+			<span @click="backKeyInput()">
+				<i class="iconfont icon-fanhui"></i>
+			</span>
+        </div>
+        <div class="imgIconList">
+            <!--js-svg表情包-->
+
+            <svg class="icon feedBtn" v-for="icon in iconList" aria-hidden="true" @click="addImgIcon(icon.key)">
+                <use v-bind:xlink:href="icon.clas"></use>
+            </svg>
+            <!--css-class表情包-->
+            <!--<i v-for="icon in iconList" class="iconfont imgIconItem" v-bind:class="icon.clas"  @click="addImgIcon(icon.key)">-->
+                <!--&lt;!&ndash; {{icon.con}} &ndash;&gt;-->
+            <!--</i>-->
+        </div>
+    </div>
+    <!--直播建仓-->
+    <div class="liveJC" v-show="jpc_state.jcstate" v-cloak>
+        <div class="JCHeader">
+            <a href="javascript:void(0)" class="buyUp feedBtn" @click="buyUp" v-bind:class="{ buy: jc_data.buyType }" >买涨</a>
+            <div class="proName" v-cloak>
+                {{jc_data.selPro}}{{jc_data.selProPri}}
+            </div>
+            <a href="javascript:void(0)" class="buyDown feedBtn" @click="buyDown" v-bind:class="{ buy: !jc_data.buyType }">买跌</a>
+        </div>
+        <div class="JCbody ovhd">
+            <div class="bodyItem">
+                <span class="itemTitle">产品</span>
+                <div class="proType">
+                    <i class="itemName feedBtn" v-for="(proitem,index) in pro_data" v-bind:class="{ sel: jc_data.buyType&&seledProIndex==index,seldown:!jc_data.buyType&&index==seledProIndex}" @click="selPro(index)">
+                        <b class="name" v-cloak>{{proitem.name}}</b>
+                        <b class="jiage" v-cloak>{{proitem.point}}</b>
+                    </i>
+                </div>
+                <a href="javascript:void(0)" class="otherPro otherProType feedBtn">
+                    其他
+                </a>
+            </div>
+            <div class="bodyItem">
+                <span class="itemTitle">规格</span>
+                <div class="proType">
+                    <i class="itemName feedBtn" v-for="(priitem,index) in jc_data.selPriList" @click="selFormat(index)" v-bind:class="{ sel: jc_data.buyType&&index==seledForIndex,seldown:!jc_data.buyType&&index==seledForIndex}">
+                        <p class="name textOverDot" v-cloak>{{priitem.name}}</p>
+                        <b class="jiage textOverDot" v-cloak>{{priitem.clientDepositFee}}元/手</b>
+                    </i>
+                </div>
+                <a href="javascript:void(0)" class="otherPro otherProNum feedBtn">
+                    其他
+                </a>
+            </div>
+        </div>
+        <div class="JCBuyOpr">
+            <p class="buyNum disbl fl textOverDot">
+                购买数量
+            </p>
+            <div class="oprRange">
+                <div class="minHand" @click="reduHandNum()">
+                    <a href="javascript:void(0)">
+                        <img src="../../images/orderaredu.png" alt="">
+                    </a>
+                    <span class="minRange">{{jc_data.selPri.minLot}}手</span>
+                </div>
+                <div class="rangeWrap">
+                    <p class="nowRangeData" v-cloak>购买{{jc_data.buyHandNum}}手</p>
+                    <input type="range" :min="jc_data.selPri.minLot" :max="jc_data.selPri.maxLot" v-model="jc_data.buyHandNum" class="nowRange">
+                </div>
+                <div class="maxHand" @click="addHandNum()">
+                    <span class="maxRange textOverDot">{{jc_data.selPri.maxLot}}手</span>
+                    <a href="javascript:void(0)">
+                        <img src="../../images/orderadd.png" alt="">
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="HTAllVal">
+            合同总价值<span>3720</span>
+        </div>
+        <div class="YKOpr">
+            <div class="oprRange">
+                <div class="minHand" @click="reduStopProNum()">
+                    <a href="javascript:void(0)">
+                        <img src="../../images/orderaredu.png" alt="">
+                    </a>
+                    <span class="minRange">不限</span>
+                </div>
+                <div class="rangeWrap" id="myZY">
+                    <p class="nowRangeData ZY">止盈：<span v-cloak>{{jc_data.stopProNum==0?'不限':jc_data.stopProNum}}</span></p>
+                    <input type="range" min="0" :max="jc_data.selPri.stopProfitPoint"  v-model="jc_data.stopProNum" class="nowRange">
+                </div>
+                <div class="maxHand" @click="addStopProNum()">
+                    <span class="maxRange">{{jc_data.selPri.stopProfitPoint}}点</span>
+                    <a href="javascript:void(0)">
+                        <img src="../../images/orderadd.png" alt="">
+                    </a>
+                </div>
+            </div>
+            <div class="oprRange">
+                <div class="minHand" @click="reduStopLosNum()">
+                    <a href="javascript:void(0)">
+                        <img src="../../images/orderaredu.png" alt="">
+                    </a>
+                    <span class="minRange">不限</span>
+                </div>
+                <div class="rangeWrap" id="myZK">
+                    <p class="nowRangeData ZK">止亏：<span v-cloak>{{jc_data.stopLosNum==0?'不限':jc_data.stopLosNum}}</span></p>
+                    <input type="range" min="0" :max="jc_data.selPri.stopLossPoint" v-model="jc_data.stopLosNum" class="nowRange">
+                </div>
+                <div class="maxHand" @click="addStopLosNum()">
+                    <span class="maxRange">{{jc_data.selPri.stopLossPoint}}点</span>
+                    <a href="javascript:void(0)">
+                        <img src="../../images/orderadd.png" alt="">
+                    </a>
+                </div>
+            </div>
+            <div class="botComp w100 ovhd pfixed">
+                <span class="prePay disbl ovhd fl">
+                    <i class="prePayO">预付款</i>
+                    <i class="prePayT">
+                        <b v-cloak>{{jc_data.buyHandNum * jc_data.selPri.clientDepositFee}}</b>元
+                    </i>
+                    <i class="prePayH" v-cloak>
+                        手续费：{{jc_data.buyHandNum * jc_data.selPri.openChargeFee}}元
+                    </i>
+                </span>
+                <a href="javascript:void(0)" class="confirmJC disbl ovhd fr feedBtn" @click="confirmJC()">
+                    确定
+                </a>
+            </div>
+        </div>
+    </div>
+    <!--直播平仓-->
+    <div class="livePC" v-show="jpc_state.pcstate" v-cloak>
+        <div class="PCPro w100 ovhd">
+            <div class="ProListWrap">
+                <li v-for="(goods,index) in prolist.goods" class="proItem " v-bind:class="{ up: goods.upOrDown==1?true:false, down: goods.upOrDown==2?true:false}">
+                    <p class="itemName textOverDot" v-cloak>{{goods.name}}</p>
+                    <p class="itemPay textOverDot" v-cloak>{{goods.point}}</p>
+                </li>
+            </div>
+        </div>
+        <div class="allPingChang bg_w ovhd">
+            <div class="todayFloat fl disbl">
+                <div class="todayFloatKey fl">
+                    今日盈亏（元）
+                </div>
+                <div class="todayFlaotVal fl down" :class="{down:prolist.profit<-1,up:prolist.profit>-1}">
+                    <p v-cloak>{{prolist.profit}}</p>
+                </div>
+            </div>
+            <div class="allPingChangBtn fr feedBtn" @click="toPCAll()">
+                全部平仓
+            </div>
+        </div>
+        <div class="pingChangList bg_w ovhd">
+            <li class="pingCangItem ovhd"  v-for="(por,index) in prolist.pro">
+                <div class="itemWrap fl ovhd">
+                    <div class="itemFloat fl tc" v-cloak>
+                        {{por.useDeposit}}
+                    </div>
+                    <div class="itemDetail fl">
+                        <p class="detailT" :class="{up:por.buySell == 1,down:por.buySell != 1}" v-cloak>{{por.buySell == 1 ?"买涨":"买跌"}}</p>
+                        <p class="detailB" v-cloak>{{por.amount}}手</p>
+                    </div>
+                    <div class="itemName fl">
+                        <p class="nameT textOverDot" v-cloak>{{por.name}}</p>
+                        <p class="nameB textOverDot" v-cloak>{{por.useDeposit}} <span class="profit fr" :class="{down:por.grossProfit<0,up:por.grossProfit>-1}"   v-cloak>{{por.grossProfit}}</span></p>
+                    </div>
+                    <div class="leftSword fr">
+                        <img src="../../images/leftcon.png" alt="">
+                    </div>
+                </div>
+                <div class="itemPCBtn fr feedBtn" @click="toPC(por.id)">
+                    平仓
+                </div>
+            </li>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../../js/lib/jquery-weui/dist/lib/jquery-2.1.4.js"></script>
+<script type="text/javascript" src="../../js/lib/jquery-weui/dist/js/jquery-weui.js"></script>
+<script type="text/javascript" src="../../js/lib/vue/dist/vue.js"></script>
+<script type="text/javascript" src="../../js/config.js"></script>
+<script src="./live.js"></script>
+<script src="./index.js"></script>
+</body>
+</html>

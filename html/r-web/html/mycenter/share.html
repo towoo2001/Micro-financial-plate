@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>我要推广</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="../../css/reset.css">
+    <link rel="stylesheet" href="../../js/lib/jquery-weui/dist/lib/weui.css">
+    <link rel="stylesheet" href="../../js/lib/jquery-weui/dist/css/jquery-weui.css">
+    <link rel="stylesheet" href="../../css/global.css">
+</head>
+<body>
+
+<div id="screenlayer" style="top: 0;">
+
+</div>
+<div id="ewm">
+
+</div>
+<p class="shareTitel">
+    微信扫一扫
+</p>
+<!--<div class="ewmCode">-->
+    <!--<img src="" alt="">-->
+<!--</div>-->
+<!--<button class="feedBtn" style="color:#333;background: rgba(255,255,255,.9);outline: none;">@@@</button>-->
+<div id="vuebox">
+<p class="shareUrl" >
+    {{shareUrl.url}}
+</p>
+<button class="copyThisUrl">
+    复制链接
+</button>
+<input type="text" v-show="shareUrl.url" id="newpwd" style="width: 3px;height: 3px;opacity: 0;">
+<div class="shareEwm" >
+    <transition name="bounce">
+        <div id="nativeShare" v-show="shareconstate.state" v-if="!isWe.isWe"></div>
+        <div class="weXinBrow" v-show="shareconstate.state" v-if="isWe.isWe">
+            请在浏览器中打开或者扫描上方二维码分享
+        </div>
+    </transition>
+    <button class="shareBtn" @click="share()">一键分享</button>
+</div>
+</div>
+<script type="text/javascript" src="../../js/lib/jquery-weui/dist/lib/jquery-2.1.4.js"></script>
+<script type="text/javascript" src="../../js/lib/jquery-weui/dist/js/jquery-weui.min.js"></script>
+<script type="text/javascript" src="../../js/lib/jquery.md5.js"></script>
+<script type="text/javascript" src="../../js/plugin/jquery.qrcode.min.js"></script>
+<script type="text/javascript" src="../../js/plugin/nativeShare.js"></script>
+<script type="text/javascript" src="../../js/lib/vue/dist/vue.js"></script>
+<script type="text/javascript" src="../../js/config.js"></script>
+<script type="text/javascript" src="./share.js"></script>
+</body>
+<script>
+    $(function(){
+        $('.copyThisUrl').click(function(){
+            var newp=document.getElementById("newpwd");
+            if(newp.select){
+                newp.select();
+                document.execCommand("Copy");
+                $.toptip('复制成功', 'success');
+            }else{
+                $.toptip('复制失败请手动复制', 'error');
+            }
+        })
+    })
+</script>
+</html>

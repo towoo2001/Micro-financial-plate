@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8 />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="email=no">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <!--<meta http-equiv="Cache-Control" content="no-cache">-->
+    <meta name="screen-orientation" content="portrait">
+    <meta name="x5-orientation" content="portrait">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+    <meta name="browsermode" content="application">
+    <meta name="x5-page-mode" content="app">
+    <link rel="stylesheet" href="../../js/lib/jquery-weui/dist/lib/weui.css">
+    <link rel="stylesheet" href="../../js/lib/jquery-weui/dist/css/jquery-weui.css">
+    <link rel="stylesheet" href="../../css/reset.css">
+    <link rel="stylesheet" href="../../css/global.css">
+    <!--<script src="http://g.tbcdn.cn/mtb/lib-flexible/0.3.4/??flexible_css.js,flexible.js"></script>-->
+    <script src="../../js/rem/flexible.css.js"></script>
+    <script src="../../js/rem/flexible.ios.js"></script>
+    <title>充值</title>
+</head>
+<body>
+<!--用户未登录提示-->
+<div id="loadtiplayer"></div>
+<div class="PCconfirmLayer PCsharefirmLayer userNotLoad" v-cloak>
+    <div class="layerHeader w100">
+        您还未登录
+    </div>
+    <div class="layerCon w100">
+        <div class="layerConWrap" style="line-height: 2.675rem;">
+            <p class="YK tc">
+                现在去登录?
+            </p>
+        </div>
+    </div>
+    <div class="layerFooter w100 ovhd">
+        <a href="javascript:void(0)" class="cancelPC disbl nowCancel">取消</a>
+        <a href="javascript:void(0)" class="confirmPC disbl nowToLoad">确定</a>
+    </div>
+</div>
+
+<div id="screenlayer"></div>
+<div id="vuebox" class="rechargeWrap ovhd">
+
+    <transition name="fade">
+        <div class="PCconfirmLayer" v-show="rechargeLayer.state" v-cloak>
+            <div class="layerHeader w100">
+                充值结果
+            </div>
+            <div class="layerCon w100">
+                <div class="layerConWrap">
+                    <p class="SXF opac_0">
+                        <span>###</span>
+                <span class="SXFval" v-cloak>
+                    ###
+                </span>
+                    </p>
+                    <p class="tc">
+                 <!--<span>-->
+                     充值成功！
+                 <!--</span>-->
+                 <!--<span class="YKval opac_0" v-cloak>-->
+                     <!--###-->
+                 <!--</span>-->
+                    </p>
+                    <p class="YE opac_0">
+                <span>
+                    ###
+                </span>
+                 <span class="YEval" v-cloak>
+                     ###
+                 </span>
+                    </p>
+                </div>
+            </div>
+            <div class="layerFooter w100 ovhd">
+                <a href="javascript:void(0)" @click="continueRecharge()" class="cancelPC disbl">继续充值</a>
+                <a href="javascript:void(0)" @click="winBack()" class="confirmPC disbl">确定</a>
+            </div>
+        </div>
+    </transition>
+
+    <div class="headerForm w100 ovhd">
+        <div class="formInput fr ovhd">
+            <p class="reTitle disbl fl">
+                充值金额
+            </p>
+            <input type="text" v-model="rechargedata.money"  placeholder="充值金额>=50元" class="disbl fr">
+        </div>
+        <textarea class="rechargeTip disbl" disabled placeholder="这里是金额说明"></textarea>
+    </div>
+    <hr class="triBg">
+    <div class="botSub w100 ovhd">
+        <h3 class="reType">
+            充值方式
+        </h3>
+        <div class="weRe disbl ovhd">
+            <img src="../../images/weixin.jpg" class="reTypeLogo disbl fl" alt="">
+            <div class="reJieShao">
+                <p>银联支付</p>
+                <span>手机支付方便快捷</span>
+            </div>
+        </div>
+        <a href="javascript:void(0)" @click="toDo()"  class="subMoney disbl ovhd feedBtn">
+            提交充值
+        </a>
+    </div>
+
+    <!--<footer id="footer">-->
+        <!--<li class="navItem" @click="botNavLocation('../../index.html')">-->
+            <!--<img src="../../images/jiaoyiblur.png" alt="">-->
+            <!--<p>首页</p>-->
+        <!--</li>-->
+        <!--<li class="navItem" @click="botNavLocation('../cichang/chicang.html')">-->
+            <!--<img src="../../images/videoblur.png" alt="">-->
+            <!--<p>交易</p>-->
+        <!--</li>-->
+        <!--<li class="navItem" @click="botNavLocation('../live/live.html')">-->
+            <!--<img src="../../images/newsblur.png" alt="">-->
+            <!--<p>直播</p>-->
+        <!--</li>-->
+        <!--<li class="navItem active" @click="botNavLocation('/html/mycenter/my.html')">-->
+            <!--<img src="../../images/myfocus.png" alt="">-->
+            <!--<p>个人</p>-->
+        <!--</li>-->
+    <!--</footer>-->
+</div>
+
+<script type="text/javascript" src="../../js/lib/jquery-weui/dist/lib/jquery-2.1.4.js"></script>
+<script type="text/javascript" src="../../js/lib/jquery-weui/dist/js/jquery-weui.js"></script>
+<script type="text/javascript" src="../../js/lib/jquery-weui/dist/lib/fastclick.js"></script>
+<script type="text/javascript" src="../../js/lib/vue/dist/vue.js"></script>
+<script type="text/javascript" src="../../js/lib/jquery.md5.js"></script>
+<script type="text/javascript" src="../../js/config.js"></script>
+<script type="text/javascript" src="./recharge.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html style="background: #fbfbfb;">
+<head>
+    <meta charset=utf-8 />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="email=no">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <!--<meta http-equiv="Cache-Control" content="no-cache">-->
+    <meta name="screen-orientation" content="portrait">
+    <meta name="x5-orientation" content="portrait">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+    <meta name="browsermode" content="application">
+    <meta name="x5-page-mode" content="app">
+    <link rel="stylesheet" href="../../js/lib/jquery-weui/dist/lib/weui.css">
+    <link rel="stylesheet" href="../../js/lib/jquery-weui/dist/css/jquery-weui.css">
+    <link rel="stylesheet" href="../../css/swiper-3.3.1.min.css">
+    <link rel="stylesheet" href="../../css/reset.css">
+    <link rel="stylesheet" href="../../css/global.css">
+    <!--<script src="http://g.tbcdn.cn/mtb/lib-flexible/0.3.4/??flexible_css.js,flexible.js"></script>-->
+    <script src="../../js/rem/flexible.css.js"></script>
+    <script src="../../js/rem/flexible.ios.js"></script>
+    <title>持仓</title>
+</head>
+<body style="background: #fbfbfb;">
+<!--用户未登录提示-->
+<div id="loadtiplayer"></div>
+<div class="PCconfirmLayer PCsharefirmLayer userNotLoad" v-cloak>
+    <div class="layerHeader w100">
+        您还未登录
+    </div>
+    <div class="layerCon w100">
+        <div class="layerConWrap" style="line-height: 2.675rem;">
+            <p class="YK tc">
+                现在去登录?
+            </p>
+        </div>
+    </div>
+    <div class="layerFooter w100 ovhd">
+        <a href="javascript:void(0)" class="cancelPC disbl nowCancel">取消</a>
+        <a href="javascript:void(0)" class="confirmPC disbl nowToLoad">确定</a>
+    </div>
+</div>
+<div id="screenlayer"></div>
+
+<div id="vuebox" class="indexWrap">
+    <!--平仓分享弹出框-->
+    <transition name="fade">
+        <div class="PCconfirmLayer PCsharefirmLayer" v-show="shareState.state" v-cloak>
+            <div class="layerHeader w100">
+                平仓成功
+            </div>
+            <div class="layerCon w100">
+                <div class="layerConWrap">
+                    <p class="SXF">
+                        <span>盈利:</span>
+                        <span class="SXFval" :class="{up:confirm.profit>-1,down:confirm.profit<0}" v-cloak>
+                            {{confirm.profit}}
+                        </span>
+                    </p>
+                    <p class="YK opac_0">
+                         <span>
+                             ###
+                         </span>
+                         <span class="YKval up" v-cloak>
+                             ###
+                         </span>
+                    </p>
+                    <p class="YE">
+                        <span>
+                            平仓后余额:
+                        </span>
+                         <span class="YEval" v-cloak>
+                             {{confirm.balance}}
+                         </span>
+                    </p>
+                </div>
+            </div>
+            <div class="layerFooter w100 ovhd">
+                <a href="javascript:void(0)" @click="closeShare()" class="cancelPC disbl">确定</a>
+                <a href="javascript:void(0)" @click="toShare()" class="confirmPC disbl">晒单</a>
+            </div>
+        </div>
+    </transition>
+
+    <!--平仓弹出框-->
+    <transition name="fade">
+     <div class="PCconfirmLayer" v-show="confirmState.state" v-cloak>
+        <div class="layerHeader porel w100">
+            <div class="poabl w100 h100 tl PCtipsCon">
+                尊敬的用户，如果您选择不允许交易偏差，您的订单只会在行情再次达到显示点位时才会平仓。
+            </div>
+            确定平仓吗？
+        </div>
+         <div class="layerCon w100">
+            <div class="layerConWrap">
+                <p class="SXF">
+                    <span>平仓手续费:</span>
+                    <span class="SXFval" v-cloak>
+                        {{confirm.closeChargeFee}}
+                    </span>
+                </p>
+                <p class="YK">
+                     <span>
+                         浮动盈亏:
+                     </span>
+                     <span class="YKval" :class="{up:confirm.profit>-1,down:confirm.profit<0}" v-cloak>
+                         {{confirm.profit}}
+                     </span>
+                </p>
+                <p class="YE">
+                    <span>
+                        平仓后余额:
+                    </span>
+                     <span class="YEval" v-cloak>
+                         {{confirm.balance}}
+                     </span>
+                </p>
+                <p class="agreenFloat disbl ovhd">
+                    <label class="disbl ovhd fl">
+                        <input type="checkbox" @click="isAgreenFiveFloat.state=!isAgreenFiveFloat.state" :checked="isAgreenFiveFloat.state" id="rempwd">
+                        <span class="PCtipsT">允许最大交易偏差5个点
+                        </span>
+                    </label>
+                    <span class="fr PCtips">
+                        ?
+                    </span>
+                </p>
+            </div>
+         </div>
+         <div class="layerFooter w100 ovhd">
+             <a href="javascript:void(0)" @click="cancelPC()" class="cancelPC disbl">取消</a>
+             <a href="javascript:void(0)" @click="confirmPC()" class="confirmPC disbl">确定</a>
+         </div>
+     </div>
+    </transition>
+
+    <!--全部平仓弹出框-->
+    <transition name="fade">
+        <div class="PCconfirmLayer" v-show="allconfirmState.state" v-cloak>
+            <div class="layerHeader porel w100">
+                <div class="poabl w100 h100 tl PCtipsCon">
+                    尊敬的用户，如果您选择不允许交易偏差，您的订单只会在行情再次达到显示点位时才会平仓。
+                </div>
+                确定平仓吗？
+            </div>
+            <div class="layerCon w100">
+                <div class="layerConWrap">
+                    <p class="SXF">
+                        <span>平仓手续费:</span>
+                        <span class="SXFval" v-cloak>
+                            {{confirm.closeChargeFee}}
+                        </span>
+                    </p>
+                    <p class="YK">
+                         <span>
+                             浮动盈亏:
+                         </span>
+                         <span class="YKval" :class="{up:confirm.profit>-1,down:confirm.profit<0}" v-cloak>
+                             {{confirm.profit}}
+                         </span>
+                    </p>
+                    <p class="YE">
+                        <span>
+                            平仓后余额:
+                        </span>
+                         <span class="YEval" v-cloak>
+                             {{confirm.balance}}
+                         </span>
+                    </p>
+                    <p class="agreenFloat disbl ovhd">
+                        <label class="disbl ovhd fl">
+                            <input type="checkbox" @click="isAgreenFiveFloat.state=!isAgreenFiveFloat.state" :checked="isAgreenFiveFloat.allstate" id="rempwd">
+                            <span class="PCtipsT">允许最大交易偏差5个点</span>
+                        </label>
+                        <span class="fr PCtips">
+                            ?
+                        </span>
+                    </p>
+                </div>
+            </div>
+            <div class="layerFooter w100 ovhd">
+                <a href="javascript:void(0)" @click="cancelPC()" class="cancelPC disbl">取消</a>
+                <a href="javascript:void(0)" @click="allConfirmPC()" class="confirmPC disbl">确定</a>
+            </div>
+        </div>
+    </transition>
+
+    <header class="addMoney chicang disbl ovhd">
+        <div class="indexHeaderWrap">
+            <img :src="userdetail.faceimg||'/images/defaultImg.gif'" class="myPic disbl ovhd fl" alt="">
+            <div class="myMoney disbl ovhd fr chiCangHeaderMoney">
+                <div class="syMoney disbl fl ovhd textOverDot">
+                    <span>可用余额：</span>
+                    <i v-cloak>{{userinfo.yue}}</i>
+                    <span>元</span>
+                </div>
+                <div class="goAddMoney chichangAddMoney disbl ovhd fr cl_w feedBtn" @click="botNavLocation('/html/mycenter/recharge.html')">
+                    充值
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="indexMain chiCang">
+        <section class="proTable">
+            <div class="swiper-container chicangContainer">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide" v-for="(goods,index) in prolist.goods">
+                        <li class="proItem" v-bind:class="{ up: goods.upOrDown==1?true:false, down: goods.upOrDown==2?true:false }">
+                            <p class="proItemTitle">
+                                <span v-cloak>{{goods.name}}</span><i></i>
+                            </p>
+                            <p class="proItemPay" v-cloak>
+                                {{goods.point}}
+                            </p>
+                        </li>
+                    </div>
+                </div>
+                <div style="opacity: 1;" class="swiper-pagination"></div>
+            </div>
+        </section>
+        <div class="allPingChang bg_w ovhd">
+            <div class="todayFloat fl disbl">
+                <div class="todayFloatKey fl">
+                    今日盈亏（元）
+                </div>
+                <div class="todayFlaotVal fl down" :class="{down:prolist.profit<-1,up:prolist.profit>-1}">
+                    <p v-cloak>{{prolist.profit}}</p>
+                </div>
+            </div>
+            <div class="allPingChangBtn fr feedBtn" @click="toPCAll()">
+                全部平仓
+            </div>
+        </div>
+        <div class="pingChangList bg_w ovhd">
+            <li class="pingCangItem ovhd" v-for="(por,index) in prolist.pro">
+                <a class="itemWrap disbl fl ovhd feedBtn" :href="'./order-detail.html?id=' + por.id">
+                    <div class="itemFloat fl tc" v-cloak>
+                        {{por.useDeposit}}
+                    </div>
+                    <div class="itemDetail fl">
+                        <p class="detailT" :class="{up:por.buySell == 1,down:por.buySell != 1}" v-cloak>{{por.buySell == 1 ?"买涨":"买跌"}}</p>
+                        <p class="detailB" v-cloak>{{por.amount}}手</p>
+                    </div>
+                    <div class="itemName fl">
+                        <p class="nameT textOverDot" v-cloak>{{por.name}}</p>
+                        <p class="nameB ovhd" v-cloak>{{por.useDeposit}}<span class="profit fr textOverDot" :class="{down:por.grossProfit<0,up:por.grossProfit>-1}"   v-cloak>{{por.grossProfit}}</span></p>
+                    </div>
+                    <div class="leftSword fr">
+                        <img src="../../images/leftcon.png" alt="">
+                    </div>
+                </a>
+                <div class="itemPCBtn fr feedBtn" @click="toPC(por.id)">
+                    平仓
+                </div>
+            </li>
+            <!--<input type="button" id="clickLoadMore" v-show="loadMoreBtn.state" :disabled="loadMoreBtn.disabled" @click="clickLoadMore()" v-model="loadMoreBtn.value" class="disbl w100 ovhd feedBtn">-->
+            <div class="weui-infinite-scroll" v-show="msglength.len>9">
+                <div class="infinite-preloader"></div>
+                正在加载
+            </div>
+        </div>
+    </div>
+
+    <footer id="footer" style="z-index: 8 !important;">
+        <li class="navItem feedBtn" @click="botNavLocation('../../index.html')">
+            <img src="../../images/jiaoyiblur.png" alt="">
+            <p>首页</p>
+        </li>
+        <li class="navItem active feedBtn">
+            <img src="../../images/videofocus.png" alt="">
+            <p>交易</p>
+        </li>
+        <li class="navItem feedBtn" @click="botNavLocation('../live/live.html')">
+            <img src="../../images/newsblur.png" alt="">
+            <p>直播</p>
+        </li>
+        <li class="navItem feedBtn" @click="botNavLocation('../mycenter/my.html')">
+            <img src="../../images/myblur.png" alt="">
+            <p>个人</p>
+        </li>
+    </footer>
+</div>
+
+<script type="text/javascript" src="../../js/lib/jquery-weui/dist/lib/jquery-2.1.4.js"></script>
+<script type="text/javascript" src="../../js/lib/jquery-weui/dist/js/jquery-weui.js"></script>
+<script type="text/javascript" src="../../js/lib/vue/dist/vue.js"></script>
+<script type="text/javascript" src="../../js/plugin/swiper-3.3.1.min.js"></script>
+<script type="text/javascript" src="../../js/lib/jquery.md5.js"></script>
+<script type="text/javascript" src="../../js/config.js"></script>
+<script type="text/javascript" src="./chicang.js"></script>
+</body>
+
+</html>

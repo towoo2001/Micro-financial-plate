@@ -1,0 +1,61 @@
+* {
+	margin: 0px;
+	padding: 0px;
+}
+
+body,
+html {
+	height: 100%;
+	-webkit-tap-highlight-color: transparent;
+	background: #f0f3f5;
+}
+a {
+	color: #666;
+}
+.clearfix {
+	display: block;
+}
+
+.clearfix:after {
+	display: block;
+	content: "";
+	clear: both;
+	visibility: hidden;
+}
+
+.weui-select-repair {
+	padding: 10px 15px!important;
+}
+
+.weui-select-repair .weui_select {
+	height: 25px!important;
+	line-height: 25px!important;
+}
+
+.ell {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.text-center {
+	text-align: center;
+}
+.block {
+	display: block;
+}
+.btn_distance {
+	padding-bottom: 10px;
+}
+.weui_search_bar {
+	color: #666;
+}
+.weui_search_inner {
+	position: relative;
+	z-index: 99999;
+}
+.weui_search_text {
+	display: none;
+}
+.require {
+	color: #ff0000;
+}

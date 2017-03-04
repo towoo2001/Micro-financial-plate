@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html style="background: #fff;">
+<head>
+    <meta charset=utf-8 />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="email=no">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <!--<meta http-equiv="Cache-Control" content="no-cache">-->
+    <meta name="screen-orientation" content="portrait">
+    <meta name="x5-orientation" content="portrait">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+    <meta name="browsermode" content="application">
+    <meta name="x5-page-mode" content="app">
+    <link rel="stylesheet" href="./js/lib/jquery-weui/dist/lib/weui.css">
+    <link rel="stylesheet" href="./js/lib/jquery-weui/dist/css/jquery-weui.css">
+    <link rel="stylesheet" href="./css/swiper-3.3.1.min.css">
+    <link rel="stylesheet" href="./css/reset.css">
+    <link rel="stylesheet" href="./css/global.css">
+    <!--<script src="http://g.tbcdn.cn/mtb/lib-flexible/0.3.4/??flexible_css.js,flexible.js"></script>-->
+    <script src="./js/rem/flexible.css.js"></script>
+    <script src="./js/rem/flexible.ios.js"></script>
+    <title>首页</title>
+</head>
+<body style="background: #fff;">
+
+<!--页面加载动画-->
+<div class="spinner">
+    <div class="rect1"></div>
+    <div class="rect2"></div>
+    <div class="rect3"></div>
+    <div class="rect4"></div>
+    <div class="rect5"></div>
+</div>
+<div id="screenlayer"></div>
+<!--用户未登录提示-->
+<div id="loadtiplayer"></div>
+<div class="PCconfirmLayer PCsharefirmLayer userNotLoad" v-cloak>
+    <div class="layerHeader w100">
+        您还未登录
+    </div>
+    <div class="layerCon w100">
+        <div class="layerConWrap" style="line-height: 2.675rem;">
+            <p class="YK tc">
+                现在去登录?
+            </p>
+        </div>
+    </div>
+    <div class="layerFooter w100 ovhd">
+        <a href="javascript:void(0)" class="cancelPC disbl nowCancel">取消</a>
+        <a href="javascript:void(0)" class="confirmPC disbl nowToLoad">确定</a>
+    </div>
+</div>
+<div id="vuebox" class="index2Wrap">
+    <!--建仓弹出层-->
+    <div class="liveJC" v-show="jc_state.jcstate" v-cloak>
+        <div class="JCHeader">
+            <a href="javascript:void(0)" class="buyUp" :style="{ opacity:0 }" :class="{ buy: jc_data.buyType }" >买涨</a>
+            <div class="proName" v-cloak>
+                {{jc_data.selPro}}{{jc_data.selProPri}}
+            </div>
+            <a href="javascript:void(0)" class="buyDown" :style="{ opacity:0 }"  :class="{ buy: !jc_data.buyType }">买跌</a>
+        </div>
+        <div class="JCbody ovhd">
+            <div class="bodyItem">
+                <span class="itemTitle">产品</span>
+                <div class="proType">
+                    <i class="itemName feedBtn" v-for="(proitem,index) in pro_data" v-if="index==seledProIndex" :class="{ sel: jc_data.buyType&&seledProIndex==index,seldown:!jc_data.buyType&&index==seledProIndex}">
+                        <b class="name textOverDot" v-cloak>{{proitem.name}}</b>
+                        <b class="jiage textOverDot" v-cloak>{{proitem.point}}</b>
+                    </i>
+                </div>
+                <!--<a href="javascript:void(0)" class="otherPro otherProType">-->
+                    <!--其他-->
+                <!--</a>-->
+            </div>
+            <div class="bodyItem">
+                <span class="itemTitle">规格</span>
+                <div class="proType">
+                    <i class="itemName feedBtn" v-for="(priitem,index) in jc_data.selPriList" v-if="index==seledForIndex" :class="{ sel: jc_data.buyType&&index==seledForIndex,seldown:!jc_data.buyType&&index==seledForIndex}">
+                        <p class="name textOverDot" v-cloak>{{priitem.name}}</p>
+                        <b class="jiage textOverDot" v-cloak>{{priitem.clientDepositFee}}元/手</b>
+                    </i>
+                </div>
+                <!--<a href="javascript:void(0)" class="otherPro otherProNum">-->
+                    <!--其他-->
+                <!--</a>-->
+            </div>
+        </div>
+        <div class="JCBuyOpr">
+            <p class="buyNum disbl fl textOverDot">
+                购买数量
+            </p>
+            <div class="oprRange">
+                <div class="minHand" @click="reduHandNum()">
+                    <a href="javascript:void(0)" class="feedBtn">
+                        <img src="./images/orderaredu.png" alt="">
+                    </a>
+                    <span class="minRange">{{jc_data.selPri.minLot}}手</span>
+                </div>
+                <div class="rangeWrap">
+                    <p class="nowRangeData" v-cloak>购买{{jc_data.buyHandNum}}手</p>
+                    <input type="range" :min="jc_data.selPri.minLot" :max="jc_data.selPri.maxLot" v-model="jc_data.buyHandNum" class="nowRange">
+                </div>
+                <div class="maxHand" @click="addHandNum()">
+                    <span class="maxRange">{{jc_data.selPri.maxLot}}手</span>
+                    <a href="javascript:void(0)" class="feedBtn">
+                        <img src="./images/orderadd.png" alt="">
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="HTAllVal">
+            合同总价值<span>3720</span>
+        </div>
+        <div class="YKOpr">
+            <div class="oprRange">
+                <div class="minHand" @click="reduStopProNum()">
+                    <a href="javascript:void(0)" class="feedBtn">
+                        <img src="./images/orderaredu.png" alt="">
+                    </a>
+                    <span class="minRange">不限</span>
+                </div>
+                <div class="rangeWrap" id="myZY">
+                    <p class="nowRangeData ZY">止盈：<span v-cloak>{{jc_data.stopProNum==0?'不限':jc_data.stopProNum}}</span></p>
+                    <input type="range" min="0" :max="jc_data.selPri.stopProfitPoint" v-model="jc_data.stopProNum" class="nowRange">
+                </div>
+                <div class="maxHand" @click="addStopProNum()">
+                    <span class="maxRange">{{jc_data.selPri.stopProfitPoint}}点</span>
+                    <a href="javascript:void(0)" class="feedBtn">
+                        <img src="./images/orderadd.png" alt="">
+                    </a>
+                </div>
+            </div>
+            <div class="oprRange">
+                <div class="minHand" @click="reduStopLosNum()">
+                    <a href="javascript:void(0)" class="feedBtn">
+                        <img src="./images/orderaredu.png" alt="">
+                    </a>
+                    <span class="minRange">不限</span>
+                </div>
+                <div class="rangeWrap" id="myZK">
+                    <p class="nowRangeData ZK">止亏：<span v-cloak>{{jc_data.stopLosNum==0?'不限':jc_data.stopLosNum}}</span></p>
+                    <input type="range" min="0" :max="jc_data.selPri.stopLossPoint" v-model="jc_data.stopLosNum" class="nowRange">
+                </div>
+                <div class="maxHand" @click="addStopLosNum()">
+                    <span class="maxRange">{{jc_data.selPri.stopLossPoint}}点</span>
+                    <a href="javascript:void(0)" class="feedBtn">
+                        <img src="./images/orderadd.png" alt="">
+                    </a>
+                </div>
+            </div>
+            <div class="botComp w100 ovhd pfixed">
+                <span class="prePay disbl ovhd fl">
+                    <i class="prePayO">预付款</i>
+                    <i class="prePayT">
+                        <b v-cloak>{{jc_data.buyHandNum * jc_data.selPri.clientDepositFee}}</b>元
+                    </i>
+                    <i class="prePayH" v-cloak>
+                        手续费：{{jc_data.buyHandNum * jc_data.selPri.openChargeFee}}元
+                    </i>
+                </span>
+                <a href="javascript:void(0)" class="confirmJC disbl ovhd fr feedBtn" @click="confirmJC()">
+                    确定
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="indexMain">
+        <div class="accountHeader">
+            <div class="DJQ fl h100 tl">
+                代金券：暂无
+            </div>
+            <div class="YEWrap fr h100 ovhd">
+                <button class="disbl fr toRecharge feedBtn" @click="botNavLocation('/html/mycenter/recharge.html')">
+                    充值
+                </button>
+                <p class="disbl Ye h100 fr" v-cloak>
+                    余额：{{userinfo.yue}}元
+                </p>
+            </div>
+        </div>
+
+        <div class="ProListWrap w100 ovhd">
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide feedBtn" v-for="(item,index) in pro_data">
+                        <li class="proItem up" @click="selPro(index)" :class="{up:item.upOrDown==1?true:false,down:item.upOrDown==2?true:false,sel:index==seledProIndex}">
+                            <div class="thisBorderShell">
+                                <p class="proItemTitle" v-cloak>
+                                    <span>{{item.name}}</span><i></i>
+                                </p>
+                                <p class="proItemPay" v-cloak>
+                                    {{item.point}}
+                                </p>
+                            </div>
+                        </li>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="PGXTMsg w100">
+            <p class="disbl ovhd fl w100">
+                <span class="disbl ovhd w100 sysMsg">
+                </span>
+            </p>
+        </div>
+
+        <div class="echartWrap w100 bg_w">
+            <div class="topLeftInfo">
+                <p class="hAndL">
+                    <span class="higST">
+                        最高 <i v-cloak>{{leftTopInfo.higst}}</i>
+                    </span>
+                    <span class="lowST" v-cloak>
+                        最低 <i v-cloak>{{leftTopInfo.lowst}}</i>
+                    </span>
+                </p>
+                <p class="tAndY">
+                    <span class="today" v-cloak>
+                        今开 <b v-cloak>{{leftTopInfo.today}}</b>
+                    </span>
+                    <span class="ytday" v-cloak>
+                        昨收 <b v-cloak>{{leftTopInfo.ytday}}</b>
+                    </span>
+                </p>
+            </div>
+            <div class="chartTiemSelKe feedBtn">
+                分时
+            </div>
+            <transition name="chartType">
+                <div class="chartTiemSel" v-cloak v-show="chartTypeState.state">
+                    <li class="chartSelItem feedBtn" v-for="(type,index) in charttype" @click="selCharttype(index)" :class="{seled:index==seledcharttype.type}" v-cloak>
+                        {{type.name}}
+                    </li>
+                </div>
+            </transition>
+            <div id="chart" style="width: 105%;height:7.453125rem;margin: 0 auto;padding-left:0.15625rem">
+
+            </div>
+        </div>
+        <div class="lookUpOrDown w100 ovhd">
+            <div class="loopUp" :style="{ width: buyPercent.uppercent }" v-cloak>
+                &nbsp;看涨{{buyPercent.uppercent}}
+            </div>
+            <div class="loopDown" :style="{ width: buyPercent.downpercent }" v-cloak>
+                看跌{{buyPercent.downpercent}}&nbsp;
+            </div>
+        </div>
+        <div class="botProSel ovhd">
+            <div class="selProUp fl tc feedBtn" @click="buyUp()">
+                <p class="shouldMarTop buySwordIcon">
+                    <img src="./images/indexup.png" alt="">
+                </p>
+                <p>买涨</p>
+            </div>
+
+            <div class="selProChange disbl ovhd fl">
+                <div class="selChangeUp">
+                    <img src="./images/indexswordup.png" alt="">
+                </div>
+                <div class="selChangeBody">
+                    <div class="swiper-container">
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide" v-for="(item,index) in jc_data.selPriList">
+                                <p class="slideName disbl w100" v-cloak>
+                                    {{item.name}}
+                                </p>
+                                <p class="slideInfo disbl ovhd w100">
+                                    <span class="infoPrice disbl fl" v-cloak>
+                                        {{item.clientDepositFee}}元/手
+                                    </span>
+                                    <span class="infoFloat disbl fr" v-cloak>
+                                        波动盈亏{{item.profitPerunit}}元
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="swiper-pagination"></div>
+                    </div>
+                </div>
+                <div class="selChangeDown">
+                    <img src="./images/indexswordown.png" alt="">
+                </div>
+            </div>
+
+            <div class="selProDown fr tc feedBtn" @click="buyDown()">
+                <p class="shouldMarTop">买跌</p>
+                <p class="buySwordIcon">
+                    <img src="./images/indexdown.png" alt="">
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <footer id="footer">
+        <li class="navItem active feedBtn">
+            <img src="./images/jiaoyifocus.png" alt="">
+            <p>首页</p>
+        </li>
+        <li class="navItem feedBtn" @click="botNavLocation('/html/cichang/chicang.html')">
+            <img src="./images/videoblur.png" alt="">
+            <p>交易</p>
+        </li>
+        <li class="navItem feedBtn" @click="botNavLocation('/html/live/live.html')">
+            <img src="./images/newsblur.png" alt="">
+            <p>直播</p>
+        </li>
+        <li class="navItem feedBtn" @click="botNavLocation('/html/mycenter/my.html')">
+            <img src="./images/myblur.png" alt="">
+            <p>个人</p>
+        </li>
+    </footer>
+</div>
+
+<script type="text/javascript" src="./js/lib/jquery-weui/dist/lib/jquery-2.1.4.js"></script>
+<script type="text/javascript" src="./js/lib/jquery-weui/dist/js/jquery-weui.js"></script>
+<script type="text/javascript" src="./js/lib/vue/dist/vue.js"></script>
+<script type="text/javascript" src="./js/plugin/swiper-3.3.1.min.js"></script>
+<script type="text/javascript" src="./js/plugin/echarts.js"></script>
+<script type="text/javascript" src="./js/lib/jquery.md5.js"></script>
+<script type="text/javascript" src="./js/config.js"></script>
+<script type="text/javascript" src="./js/index.js"></script>
+</body>
+
+</html>

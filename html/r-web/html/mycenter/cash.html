@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8 />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="email=no">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <!--<meta http-equiv="Cache-Control" content="no-cache">-->
+    <meta name="screen-orientation" content="portrait">
+    <meta name="x5-orientation" content="portrait">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+    <meta name="browsermode" content="application">
+    <meta name="x5-page-mode" content="app">
+    <link rel="stylesheet" href="../../js/lib/jquery-weui/dist/lib/weui.css">
+    <link rel="stylesheet" href="../../js/lib/jquery-weui/dist/css/jquery-weui.css">
+    <link rel="stylesheet" href="../../css/reset.css">
+    <link rel="stylesheet" href="../../css/global.css">
+    <!--<script src="http://g.tbcdn.cn/mtb/lib-flexible/0.3.4/??flexible_css.js,flexible.js"></script>-->
+    <script src="../../js/rem/flexible.css.js"></script>
+    <script src="../../js/rem/flexible.ios.js"></script>
+    <title>提现</title>
+</head>
+<body>
+<!--用户未登录提示-->
+<div id="loadtiplayer"></div>
+<div class="PCconfirmLayer PCsharefirmLayer userNotLoad" v-cloak>
+    <div class="layerHeader w100">
+        您还未登录
+    </div>
+    <div class="layerCon w100">
+        <div class="layerConWrap" style="line-height: 2.675rem;">
+            <p class="YK tc">
+                现在去登录?
+            </p>
+        </div>
+    </div>
+    <div class="layerFooter w100 ovhd">
+        <a href="javascript:void(0)" class="cancelPC disbl nowCancel">取消</a>
+        <a href="javascript:void(0)" class="confirmPC disbl nowToLoad">确定</a>
+    </div>
+</div>
+<div id="vuebox" class="cashWrap rechargeWrap ovhd indexWrap">
+    <header class="addMoney chicang disbl ovhd">
+        <div class="indexHeaderWrap">
+            <img :src="userInfo.faceimg||'/images/defaultImg.gif'" class="myPic disbl ovhd fl" alt="">
+            <div class="myMoney disbl ovhd fr">
+                <div class="syMoney disbl fl ovhd">
+                    <span>可用余额：</span>
+                    <i v-cloak>{{money.yue}}</i>
+                    <span>元</span>
+                </div>
+                <div class="goAddMoney chichangAddMoney disbl ovhd fr cl_w feedBtn" @click="botNavLocation('/html/mycenter/recharge.html')">
+                    充值
+                </div>
+            </div>
+        </div>
+    </header>
+    <hr class="triBg">
+
+    <div class="cashFormWRap w100 ovhd">
+        <li class="iptWrap w100 ovhd">
+            <div class="iptWrapItem">
+                <p class="disbl fl">
+                    提现金额
+                </p>
+                <input type="text" v-model="cashdata.money"  class="disbl ovhd tr fr" placeholder="请输入金额">
+            </div>
+        </li>
+        <li class="iptWrap w100 ovhd">
+            <div class="iptWrapItem">
+                <p class="disbl fl">
+                    提现银行
+                </p>
+                <input type="text" v-model="cashdata.bankname" class="disbl ovhd tr fr" placeholder="请输入金额">
+            </div>
+        </li>
+        <li class="iptWrap w100 ovhd">
+            <div class="iptWrapItem">
+                <p class="disbl fl">
+                    姓名
+                </p>
+                <input type="text" v-model="cashdata.username" class="disbl ovhd tr fr" placeholder="请输入姓名">
+            </div>
+        </li>
+        <li class="iptWrap w100 ovhd">
+            <div class="iptWrapItem">
+                <p class="disbl fl">
+                    银行卡号
+                </p>
+                <input type="text" v-model="cashdata.account" class="disbl ovhd tr fr" placeholder="请输入卡号">
+            </div>
+        </li>
+        <li class="iptWrap w100 ovhd">
+            <div class="iptWrapItem">
+                <p class="disbl fl">
+                    交易密码
+                </p>
+                <input type="password" v-model="cashdata.pwd"   class="disbl ovhd tr fr" placeholder="请输入交易密码">
+            </div>
+        </li>
+    </div>
+    <hr class="triBg">
+
+    <div class="getCode w100 ovhd">
+        <li class="getCodeWrap">
+            <div class="codeIpt fl">
+                <p class="disbl fl">交易码</p>
+                <input class="iptCode disbl fl" v-model="cashdata.code"  type="text" placeholder="请输入交易码">
+            </div>
+            <input type="button" @click="getVcode()" class="creatCode disbl fr feedBtn" value="获取验证码">
+        </li>
+    </div>
+
+    <div class="botSub w100 ovhd">
+        <a href="javascript:void(0)" @click="toDo()" class="subMoney disbl ovhd feedBtn">
+            提交
+        </a>
+    </div>
+
+    <!--<footer id="footer">-->
+        <!--<li class="navItem" @click="botNavLocation('../../index.html')">-->
+            <!--<img src="../../images/jiaoyiblur.png" alt="">-->
+            <!--<p>首页</p>-->
+        <!--</li>-->
+        <!--<li class="navItem" @click="botNavLocation('../cichang/chicang.html')">-->
+            <!--<img src="../../images/videoblur.png" alt="">-->
+            <!--<p>交易</p>-->
+        <!--</li>-->
+        <!--<li class="navItem" @click="botNavLocation('../live/live.html')">-->
+            <!--<img src="../../images/newsblur.png" alt="">-->
+            <!--<p>直播</p>-->
+        <!--</li>-->
+        <!--<li class="navItem active" @click="botNavLocation('/html/mycenter/my.html')">-->
+            <!--<img src="../../images/myfocus.png" alt="">-->
+            <!--<p>个人</p>-->
+        <!--</li>-->
+    <!--</footer>-->
+</div>
+
+<script type="text/javascript" src="../../js/lib/jquery-weui/dist/lib/jquery-2.1.4.js"></script>
+<script type="text/javascript" src="../../js/lib/jquery-weui/dist/js/jquery-weui.js"></script>
+<script type="text/javascript" src="../../js/lib/jquery-weui/dist/lib/fastclick.js"></script>
+<script type="text/javascript" src="../../js/lib/vue/dist/vue.js"></script>
+<script type="text/javascript" src="../../js/lib/jquery.md5.js"></script>
+<script type="text/javascript" src="../../js/config.js"></script>
+
+<script type="text/javascript" src="./cash.js"></script>
+</body>
+
+</html>

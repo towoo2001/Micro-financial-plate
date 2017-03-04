@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html style="background: #e8edf2">
+<head>
+    <meta charset=utf-8 />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="email=no">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <!--<meta http-equiv="Cache-Control" content="no-cache">-->
+    <meta name="screen-orientation" content="portrait">
+    <meta name="x5-orientation" content="portrait">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+    <meta name="browsermode" content="application">
+    <meta name="x5-page-mode" content="app">
+    <link rel="stylesheet" href="../../js/lib/jquery-weui/dist/lib/weui.css">
+    <link rel="stylesheet" href="../../js/lib/jquery-weui/dist/css/jquery-weui.css">
+    <link rel="stylesheet" href="../../css/reset.css">
+    <link rel="stylesheet" href="../../css/global.css">
+    <!--<script src="http://g.tbcdn.cn/mtb/lib-flexible/0.3.4/??flexible_css.js,flexible.js"></script>-->
+    <script src="../../js/rem/flexible.css.js"></script>
+    <script src="../../js/rem/flexible.ios.js"></script>
+    <title>收支明细</title>
+</head>
+<body style="background: #e8edf2">
+<div id="vuebox">
+    <div class="serachHeader w100 ovhd">
+        <i class="searchHeaderTitle disbl fl">
+            查询</br>
+            时间
+        </i>
+        <div class="searchInput disbl fl">
+            <input type="date" class="startTime" v-model="totalInfo.startTime" placeholder="开始时间"> - <input type="date" class="endTime" placeholder="结束时间" v-model="totalInfo.endTime">
+        </div>
+        <i class="searchIcon disbl fr" @click="searchMsg()">
+            <img src="../../images/searchIcon.png" alt="">
+        </i>
+    </div>
+    <div class="messageWrap BPDetail dealDetail">
+        <div class="messageItem yl ovhd">
+            <div class="messageTitle w100" @click="selectList(2)">
+                <p>卖出
+                    <span class="fr" v-cloak>{{totalInfo.sell}}</span>
+                </p>
+                <i class="toggleIcon"></i>
+            </div>
+            <ul class="w100 msgWrap ovhd">
+                <div class="noCon" v-if="!msglength.len" v-cloak>
+                    <!--无内容-->
+                </div>
+                <div class="detailLists ovhd">
+                    <li  v-for="(por,index) in totalInfo.por" v-cloak>
+                        <p v-cloak>交易号：{{por.posNo}}</p>
+                        <p v-cloak>
+                            建仓成本：{{por.useDeposit}}
+                        </p>
+                        <p v-cloak>商品名称：{{por.name}}</p>
+                        <p v-cloak>建仓时间：{{por.openTime}}</p>
+                    </li>
+                </div>
+            </ul>
+        </div>
+        <div class="messageItem ovhd">
+            <div class="messageTitle w100" @click="selectList(1)">
+                <p>买入
+                    <span class="fr" v-cloak>{{totalInfo.buy}}</span>
+                </p>
+                <i class="toggleIcon"></i>
+            </div>
+            <ul class="w100 msgWrap ovhd">
+                <div class="noCon" v-if="!msglength.len" v-cloak>
+                    <!--无内容-->
+                </div>
+                <div class="detailLists ovhd">
+                    <li  v-for="(por,index) in totalInfo.por" v-cloak>
+                        <p v-cloak>交易号：{{por.posNo}}</p>
+                        <p v-cloak>
+                            建仓成本：{{por.useDeposit}}
+                        </p>
+                        <p v-cloak>商品名称：{{por.name}}</p>
+                        <p v-cloak>建仓时间：{{por.openTime}}</p>
+                    </li>
+                </div>
+            </ul>
+        </div>
+
+        <div class="messageItem ovhd yl">
+            <div class="messageTitle w100" @click="selectList(3)">
+                <p>盈利
+                    <span class="fr" v-cloak>{{totalInfo.profit}}</span>
+                </p>
+                <i class="toggleIcon"></i>
+            </div>
+            <ul class="w100 msgWrap ovhd" v-cloak>
+                <div class="noCon"v-if="!msglength.len" v-cloak>
+                    <!--无内容-->
+                </div>
+                <div class="detailLists ovhd">
+                    <li  v-for="(por,index) in totalInfo.por" v-cloak>
+                        <p v-cloak>交易号：{{por.posNo}}</p>
+                        <p v-cloak>
+                            建仓成本：{{por.useDeposit}}
+                        </p>
+                        <p v-cloak>商品名称：{{por.name}}</p>
+                        <p v-cloak>建仓时间：{{por.openTime}}</p>
+                    </li>
+                </div>
+            </ul>
+        </div>
+
+        <div class="messageItem hasMsg ovhd" v-cloak>
+            <div class="messageTitle w100" @click="selectList(4)">
+                <p>亏损
+                    <span class="fr" v-cloak>{{totalInfo.loss}}</span>
+                </p>
+                <i class="toggleIcon"></i>
+            </div>
+            <ul class="w100 msgWrap ovhd" v-cloak>
+                <div class="noCon" v-if="!msglength.len" v-cloak>
+                    <!--无内容-->
+                </div>
+                <div class="detailLists ovhd">
+                    <li  v-for="(por,index) in totalInfo.por" v-cloak>
+                        <p v-cloak>交易号：{{por.posNo}}</p>
+                        <p v-cloak>
+                            建仓成本：{{por.useDeposit}}
+                        </p>
+                        <p v-cloak>商品名称：{{por.name}}</p>
+                        <p v-cloak>建仓时间：{{por.openTime}}</p>
+                    </li>
+                </div>
+            </ul>
+        </div>
+
+        <!--<footer id="footer">-->
+            <!--<li class="navItem active">-->
+                <!--<img src="../../images/jiaoyifocus.png" alt="">-->
+                <!--<p>首页</p>-->
+            <!--</li>-->
+            <!--<li class="navItem">-->
+                <!--<img src="../../images/videoblur.png" alt="">-->
+                <!--<p>交易</p>-->
+            <!--</li>-->
+            <!--<li class="navItem">-->
+                <!--<img src="../../images/newsblur.png" alt="">-->
+                <!--<p>新闻</p>-->
+            <!--</li>-->
+            <!--<li class="navItem">-->
+                <!--<img src="../../images/myblur.png" alt="">-->
+                <!--<p>个人</p>-->
+            <!--</li>-->
+        <!--</footer>-->
+    </div>
+</div>
+<script type="text/javascript" src="../../js/lib/jquery-weui/dist/lib/jquery-2.1.4.js"></script>
+<script type="text/javascript" src="../../js/lib/jquery-weui/dist/js/jquery-weui.js"></script>
+<script type="text/javascript" src="../../js/lib/vue/dist/vue.js"></script>
+<script type="text/javascript" src="../../js/lib/jquery.md5.js"></script>
+<script type="text/javascript" src="../../js/config.js"></script>
+
+<script type="text/javascript" src="./b-p-detail.js"></script>
+</body>
+
+</html>
